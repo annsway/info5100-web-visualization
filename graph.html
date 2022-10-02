@@ -1,0 +1,114 @@
+<html>
+    <style>
+        #container{
+            width: 800px;
+            height: 500px;
+            background: #333;
+            margin: 0 auto;
+        }
+        svg{
+            background: #fff;
+            margin: 50px 100px;
+        }
+        .axis path,
+        .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+        }
+    
+        .axis text {
+        font-family: 'Microsoft YaHei';
+        font-size: 12px;
+        }
+        .myrect{
+            fill: aqua;
+        }
+    </style>
+    <body>
+        <head><script src="https://d3js.org/d3.v7.min.js"></script></head>
+        <div id="container"></div>
+        <script>
+            d3.json('./data.json').then( 
+            (data) => {
+                function getCount(star_num) {
+                    var count = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].stars == star_num) {
+                            console.log(data[i].stars)
+                        count++;
+                    }
+                    }
+                    return count;
+                }
+                var star_1 = getCount(1)
+                var star_2 = getCount(2)
+                var star_3 = getCount(3)
+                var star_4 = getCount(4)
+                var star_5 = getCount(5)
+
+                 let datas=[
+        {
+            key:"1",
+            value:star_1
+        },
+        {
+            key:"2",
+            value:star_2
+        },
+        {
+            key:"3",
+            value:star_3
+        },
+        {
+            key:"4",
+            value:star_4
+        },
+        {
+            key:"5",
+            value:star_5
+        }
+    ]
+    let width=600,height=400,padding=40
+
+    let svg=d3.select("#container")
+    .append("svg")
+    .attr("width",width)
+    .attr("height",height)
+
+    let xScale=d3.scaleBand()
+    .domain(datas.map(d=>d.key))
+    .range([padding,width-2*padding])
+    .padding(0.5)
+
+    let yScale=d3.scaleLinear()
+    .domain([0,d3.max(datas,(d)=>d.value)])
+    .range([height-padding*2,0])
+
+    let xAxis=d3.axisBottom(xScale)
+    let yAxis=d3.axisLeft(yScale)
+
+    // 绘制坐标轴
+svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(0,'+(height-padding)+')')
+        .call(xAxis)
+
+svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate('+ padding+','+padding+')')
+        .call(yAxis);
+
+    svg.selectAll("rect")
+    .data(datas)
+    .enter()
+    .append("rect")
+    .attr("x",d=>xScale(d.key))
+    .attr("y",d=>yScale(d.value)+padding)
+    .attr("width",xScale.bandwidth())
+    .attr("height",d=>height-padding*2-yScale(d.value))
+    .attr("class","myrect")
+            })
+            </script>
+    </body>
+</html>

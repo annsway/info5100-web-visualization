@@ -1,0 +1,144 @@
+<html>
+    <style>
+        #container{
+            width: 800px;
+            height: 500px;
+            background: #333;
+            margin: 0 auto;
+        }
+        svg{
+            background: #fff;
+            margin: 50px 100px;
+        }
+        .axis path,
+        .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+        }
+        .axis text {
+        font-family: 'Microsoft YaHei';
+        font-size: 12px;
+        }
+        .myrect{
+            fill: pink;
+        }
+    </style>
+    <body>
+        <head><script src="https://d3js.org/d3.v7.min.js"></script></head>
+        <div id="container"></div>
+        <script>
+            d3.json('./data_business.json').then( 
+            (data) => {
+                var string = ""
+                for (var i = 0; i < data.length; i++) {
+                    string = data[i].categories  + ", " +string
+                }
+                var categories_list = string.split(',');
+                //console.log(categories_list)
+                const count = {};
+                for (const element of categories_list) {
+                    if (count[element]) {
+                        count[element] += 1;
+                    } else {
+                        count[element] = 1;
+                    }
+                }
+                // Create items array
+                var items = Object.keys(count).map(function(key) {
+                return [key, count[key]];
+                });
+                // Sort the array based on the second element
+                items.sort(function(first, second) {
+                return second[1] - first[1];
+                });
+                // Create a new array with only the first 5 items
+                
+                var top_1 = items[0]
+                var name_1 = top_1[0]
+                var num_1 = top_1[1]
+
+                var top_2 = items[1]
+                var name_2 = top_2[0]
+                var num_2 = top_2[1]
+
+                var top_3 = items[2]
+                var name_3 = top_3[0]
+                var num_3 = top_3[1]
+
+                var top_4 = items[3]
+                var name_4 = top_4[0]
+                var num_4 = top_4[1]
+
+                var top_5 = items[4]
+                var name_5 = top_5[0]
+                var num_5 = top_5[1]
+
+                var top_6 = items[5]
+                var name_6 = top_6[0]
+                var num_6 = top_6[1]
+
+                 let datas=[
+        {
+            key:name_1,
+            value:num_1
+        },
+        {
+            key:name_2,
+            value:num_2
+        },
+        {
+            key:name_3,
+            value:num_3
+        },
+        {
+            key:name_4,
+            value:num_4
+        },
+        {
+            key:name_5,
+            value:num_5
+        }
+    ]
+    let width=600,height=400,padding=40
+
+    let svg=d3.select("#container")
+    .append("svg")
+    .attr("width",width)
+    .attr("height",height)
+
+    let xScale=d3.scaleBand()
+    .domain(datas.map(d=>d.key))
+    .range([padding,width-2*padding])
+    .padding(0.5)
+
+    let yScale=d3.scaleLinear()
+    .domain([0,d3.max(datas,(d)=>d.value)])
+    .range([height-padding*2,0])
+
+    let xAxis=d3.axisBottom(xScale)
+    let yAxis=d3.axisLeft(yScale)
+    // 绘制坐标轴
+svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(0,'+(height-padding)+')')
+        .call(xAxis)
+
+svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate('+ padding+','+padding+')')
+        .call(yAxis);
+
+    svg.selectAll("rect")
+    .data(datas)
+    .enter()
+    .append("rect")
+    .attr("x",d=>xScale(d.key))
+    .attr("y",d=>yScale(d.value)+padding)
+    .attr("width",xScale.bandwidth())
+    .attr("height",d=>height-padding*2-yScale(d.value))
+    .attr("class","myrect") 
+            })
+            </script>
+    </body>
+</html>
