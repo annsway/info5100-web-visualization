@@ -1,0 +1,46 @@
+<html>
+    <style></style>
+
+    <body>
+
+        <head>
+            <script src="https://d3js.org/d3.v7.min.js"></script>
+        </head>
+        <div>
+            <svg id="lolipop"></svg>
+        </div>
+        <script>
+            const svg = d3.select("svg#lolipop");
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+            const margin = { top: 10, right: 10, bottom: 30, left: 60 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+            let chartArea = svg.append("g").attr("id", "points")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            // Import some CSV data
+            d3.json("yelp_business.json")
+                .then((data) => {
+                    console.log(data);
+                    // count is_open by state
+                    operations = {}
+                    // {state: {is_open: xx, is_closed: xxx}}
+                    for (let i = 0; i < data.length; i++) {
+                        let state = data[i].state;
+                        if (!(state in operations)) {
+                            operations[state] = { 'is_open': 0, 'is_close': 0 };
+                        }
+                        if (data[i].is_open == 1) {
+                            operations[state].is_open += 1;
+                        }
+                        if (data[i].is_open == 0) {
+                            operations[state].is_close += 1;
+                        }
+                    }
+                    console.log(operations);
+                })
+
+        </script>
+    </body>
+
+</html>
