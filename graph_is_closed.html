@@ -13,15 +13,20 @@
             let svg = d3.select("svg#barchart");
             const width = svg.attr("width");
             const height = svg.attr("height");
-            const margin = { top: 10, right: 10, bottom: 30, left: 60 };
+            const margin = { top: 10, right: 10, bottom: 50, left: 50 };
             const chartWidth = width - margin.left - margin.right;
             const chartHeight = height - margin.top - margin.bottom;
 
+            // create <g> tag
+            let annotations = svg.append("g").attr("id", "annotations");
+            let chartArea = svg.append("g").attr("id", "points")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
             d3.json("yelp_business.json")
                 .then((data) => {
-                    console.log(data);
+                    // console.log(data);
                     // count is_open by state
-                    operations = {}
+                    let operations = {}
                     // {state: {is_open: xx, is_closed: xxx}}
                     for (let i = 0; i < data.length; i++) {
                         let state = data[i].state;
@@ -44,61 +49,55 @@
                     console.log(json);
 
                     let maxValue = d3.max(json, d => Math.max(d.is_open, d.is_closed));
-                    console.log(maxValue);
 
                     // scaleBand() is used for categorical x 
                     let xScale = d3.scaleBand()
-                        .domain(d3.range(json.length))
-                        .rangeRound([0, width])
+                        // .domain(d3.range(json.length))
+                        .domain(json.map(d => d.state))
+                        // .range([10, width - 10]);
+                        .rangeRound([0, chartWidth])
                         .paddingInner(0.05);
 
                     let openScale = d3.scaleLinear()
-                        .domain([0, maxValue])
-                        .range([0, height / 2.0]);
+                        .domain([0, maxValue + 10])
+                        .range([0, chartHeight / 2.0]);
 
                     let closedScale = d3.scaleLinear()
-                        .domain([0, maxValue])
-                        .range([0, height / 2.0]);
+                        .domain([0, maxValue + 10])
+                        .range([0, chartHeight / 2.0]);
 
-                    // append is_open
-                    svg.selectAll("line")
-                        .data(json)
-                        .enter()
-                        .append("line")
-                        .attr("x1", function (d, i) {
-                            return xScale(i);
-                        })
-                        .attr("x2", function (d, i) {
-                            return xScale(i);
-                        })
-                        .attr("y1", function (d) {
-                            return height / 2;
-                        })
-                        .attr("y2", function (d) {
-                            return height / 2 - openScale(d.is_open);
-                        })
-                        .style("stroke", "#5555F0")
-                        .style("stroke-width", 10);
 
-                    // append is_closed
-                    svg.selectAll("line")
-                        .data(json)
-                        .enter()
-                        .append("line")
-                        .attr("x1", function (d, i) {
-                            return xScale(i);
-                        })
-                        .attr("x2", function (d, i) {
-                            return xScale(i);
-                        })
-                        .attr("y1", function (d) {
-                            return height / 2;
-                        })
-                        .attr("y2", function (d) {
-                            return height / 2 + closedScale(d.is_closed);
-                        })
-                        .style("stroke", "#F05555")
-                        .style("stroke-width", 10);
+                    // C. create axis labels and gridlines
+
+                    // x axis
+                    let bottomAxis = d3.axisBottom(xScale)
+                    annotations.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
+                        .call(bottomAxis);
+
+                    chartArea.append(json.forEach((d, i) => {
+                        svg.append("line")
+                            .attr("x1", xScale(i))
+                            .attr("x2", xScale(i))
+                            .attr("y1", chartHeight / 2)
+                            .attr("y2", chartHeight / 2 - openScale(d['is_open']))
+                            .style("stroke", "#5555F0")
+                            .style("stroke-width", 10)
+                            ;
+                    }));
+
+                    chartArea.append(json.forEach((d, i) => {
+                        svg.append("line")
+                            .attr("x1", xScale(i))
+                            .attr("x2", xScale(i))
+                            .attr("y1", chartHeight / 2)
+                            .attr("y2", chartHeight / 2 + closedScale(d['is_closed']))
+                            .style("stroke", "#F05555")
+                            .style("stroke-width", 10);
+                    }));
+
+
                 });
 
         </script>
