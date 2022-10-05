@@ -2,13 +2,16 @@
     <style>
         #container{
             width: 800px;
-            height: 500px;
-            background: #333;
+            height: 800px;
+            /* background: #333; */
             margin: 0 auto;
+            /* margin: 100px 100px; */
         }
         svg{
             background: #fff;
-            margin: 50px 100px;
+            /* margin: 100px 100px; */
+            margin: 0 auto;
+
         }
         .axis path,
         .axis line {
@@ -20,15 +23,15 @@
         font-family: 'Microsoft YaHei';
         font-size: 12px;
         }
-        .myrect{
+        /* .myrect{
             fill: pink;
-        }
+        } */
     </style>
     <body>
         <head><script src="https://d3js.org/d3.v7.min.js"></script></head>
         <div id="container"></div>
         <script>
-            d3.json('./data_business.json').then( 
+            d3.json('yelp_business_cleaned.json').then(
             (data) => {
                 var string = ""
                 for (var i = 0; i < data.length; i++) {
@@ -53,7 +56,7 @@
                 return second[1] - first[1];
                 });
                 // Create a new array with only the first 5 items
-                
+
                 var top_1 = items[0]
                 var name_1 = top_1[0]
                 var num_1 = top_1[1]
@@ -78,6 +81,22 @@
                 var name_6 = top_6[0]
                 var num_6 = top_6[1]
 
+                var top_7 = items[6]
+                var name_7 = top_7[0]
+                var num_7 = top_7[1]
+
+                var top_8 = items[7]
+                var name_8 = top_8[0]
+                var num_8 = top_8[1]
+
+                var top_9 = items[8]
+                var name_9 = top_9[0]
+                var num_9 = top_9[1]
+
+                var top_10 = items[9]
+                var name_10 = top_10[0]
+                var num_10 = top_10[1]
+
                  let datas=[
         {
             key:name_1,
@@ -98,9 +117,29 @@
         {
             key:name_5,
             value:num_5
+        },
+        {
+            key:name_6,
+            value:num_6
+        },
+        {
+            key:name_7,
+            value:num_7
+        },
+        {
+            key:name_8,
+            value:num_8
+        },
+        {
+            key:name_9,
+            value:num_9
+        },
+        {
+            key:name_10,
+            value:num_10
         }
     ]
-    let width=600,height=400,padding=40
+    let width=800,height=600,padding=75
 
     let svg=d3.select("#container")
     .append("svg")
@@ -118,27 +157,104 @@
 
     let xAxis=d3.axisBottom(xScale)
     let yAxis=d3.axisLeft(yScale)
-    // 绘制坐标轴
-svg.append('g')
-        .attr('class', 'axis')
-        .attr('transform', 'translate(0,'+(height-padding)+')')
-        .call(xAxis)
 
-svg.append('g')
-        .attr('class', 'axis')
-        .attr('transform', 'translate('+ padding+','+padding+')')
-        .call(yAxis);
+    const bartext = svg.append('g')
+      .attr('id', 'bartext');
 
-    svg.selectAll("rect")
-    .data(datas)
-    .enter()
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', 'translate(0,'+(height-padding)+')')
+      .call(xAxis)
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-45)");
+
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', 'translate('+ padding+','+padding+')')
+      .call(yAxis);
+
+      // Build color scale
+    // const myColor = d3.scaleOrdinal(d3.schemeCategory20);
+    // Build color scale
+    const myColor = d3.scaleLinear()
+      .range(["white", "#69b3a2"])
+      .domain([1,100])
+
+    let rects = svg.selectAll("rect")
+      .data(datas)
+
+    rects.enter()
     .append("rect")
     .attr("x",d=>xScale(d.key))
     .attr("y",d=>yScale(d.value)+padding)
     .attr("width",xScale.bandwidth())
     .attr("height",d=>height-padding*2-yScale(d.value))
-    .attr("class","myrect") 
-            })
-            </script>
+    .attr("fill", d=>"pink")
+  //  .attr("fill", d=>myColor(d.value))
+    .transition()   // Smooth append transition
+        .duration(1000)
+        .attr('y', d => yScale(d.value)+padding)
+        .attr('height', d => height-padding*2-yScale(d.value))
+        .on('end', function () {    // Animation when a bar is selected
+          d3.select(this).on('mouseenter', function (event, actual, i) {
+            d3.selectAll('.times')
+              .attr('opacity', 0)
+            d3.select(this)
+              .transition()
+              .duration(300)
+              .attr('opacity', 0.6)
+              .attr('x', d => xScale(d.key))
+              .attr('width', xScale.bandwidth())
+            const y = yScale(actual.value)
+            let line = svg.append('line')
+              .attr('id', 'limit')
+              .attr('x1', 0)
+              .attr('y1', y+padding)
+              .attr('x2', width)
+              .attr('y2', y+padding)
+              .attr('stroke', 'grey')
+          })
+          .on('mouseleave', function () {
+            d3.selectAll('.times')
+              .attr('opacity', 1)
+            d3.select(this)
+              .transition()
+              .duration(300)
+              .attr('opacity', 1)
+              .attr('x', d => xScale(d.key))
+              .attr('width', xScale.bandwidth())
+            svg.selectAll('#limit').remove()
+          })
+        rects.exit().remove()
+        bartext2.exit().remove()
+    // .attr("class","myrect")
+    })
+
+    let bartext2 = bartext.selectAll("text")
+      .data(datas);
+
+    bartext2
+      .attr('x', d => xScale(d.key) + 10)
+      .attr('y', d=> yScale(d.key) + padding- 5)
+      .attr('text-anchor', 'middle')
+      .text((d) => `${d.value}`)
+
+    bartext2
+      .enter()
+      .append('text')
+      .attr('class', 'text_value')
+      .attr('x', d => xScale(d.key) + 10)
+      .attr('y', d => yScale(d.value) + padding- 5)
+      .attr('text-anchor', 'middle')
+      .text(d => `${d.value}`)
+      .attr('opacity', 0)
+      .transition()
+      .delay(300)
+      .attr('opacity', 1)
+    })
+    </script>
     </body>
 </html>
