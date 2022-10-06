@@ -136,90 +136,18 @@
             items.sort(function (first, second) {
                 return second[1] - first[1];
             });
-            let top_1 = items[0]
-            let name_1 = top_1[0]
-            let num_1 = top_1[1]
 
-            let top_2 = items[1]
-            let name_2 = top_2[0]
-            let num_2 = top_2[1]
-
-            let top_3 = items[2]
-            let name_3 = top_3[0]
-            let num_3 = top_3[1]
-
-            let top_4 = items[3]
-            let name_4 = top_4[0]
-            let num_4 = top_4[1]
-
-            let top_5 = items[4]
-            let name_5 = top_5[0]
-            let num_5 = top_5[1]
-
-            let top_6 = items[5]
-            let name_6 = top_6[0]
-            let num_6 = top_6[1]
-
-            let top_7 = items[6]
-            let name_7 = top_7[0]
-            let num_7 = top_7[1]
-
-            let top_8 = items[7]
-            let name_8 = top_8[0]
-            let num_8 = top_8[1]
-
-            let top_9 = items[8]
-            let name_9 = top_9[0]
-            let num_9 = top_9[1]
-
-            let top_10 = items[9]
-            let name_10 = top_10[0]
-            let num_10 = top_10[1]
-
-            let datas = [
-                {
-                    key: name_1,
-                    value: num_1
-                },
-                {
-                    key: name_2,
-                    value: num_2
-                },
-                {
-                    key: name_3,
-                    value: num_3
-                },
-                {
-                    key: name_4,
-                    value: num_4
-                },
-                {
-                    key: name_5,
-                    value: num_5
-                },
-                {
-                    key: name_6,
-                    value: num_6
-                },
-                {
-                    key: name_7,
-                    value: num_7
-                },
-                {
-                    key: name_8,
-                    value: num_8
-                },
-                {
-                    key: name_9,
-                    value: num_9
-                },
-                {
-                    key: name_10,
-                    value: num_10
+            // Select top 10 categories.
+            let datas = [];
+            for (let i = 0; i < 10; i++) {
+                let category = {
+                    key: items[i][0],
+                    value: items[i][1]
                 }
-            ]
-            let width = 800, height = 600, padding = 75
+                datas.push(category);
+            }
 
+            let width = 800, height = 600, padding = 75
             let svg = d3.select("#top_category")
                 .append("svg")
                 .attr("width", width)
@@ -230,11 +158,9 @@
                 .domain(datas.map(d => d.key))
                 .range([padding, width - 2 * padding])
                 .padding(0.5)
-
             let yScale = d3.scaleLinear()
                 .domain([0, d3.max(datas, (d) => d.value)])
                 .range([height - padding * 2, 0])
-
             let xAxis = d3.axisBottom(xScale)
             let yAxis = d3.axisLeft(yScale)
 
@@ -425,7 +351,6 @@
                     value: number
                 });
             }
-            console.log(obj)
             let holder = {};
 
             obj.forEach(function (d) {
@@ -446,91 +371,17 @@
             items.sort(function (first, second) {
                 return second[1] - first[1];
             });
-            console.log(items)
 
-            let top_1 = items[0]
-            let name_1 = top_1[0]
-            let num_1 = top_1[1]
-
-            let top_2 = items[1]
-            let name_2 = top_2[0]
-            let num_2 = top_2[1]
-
-            let top_3 = items[2]
-            let name_3 = top_3[0]
-            let num_3 = top_3[1]
-
-            let top_4 = items[3]
-            let name_4 = top_4[0]
-            let num_4 = top_4[1]
-
-            let top_5 = items[4]
-            let name_5 = top_5[0]
-            let num_5 = top_5[1]
-
-            let top_6 = items[5]
-            let name_6 = top_6[0]
-            let num_6 = top_6[1]
-
-            let top_7 = items[6]
-            let name_7 = top_7[0]
-            let num_7 = top_7[1]
-
-            let top_8 = items[7]
-            let name_8 = top_8[0]
-            let num_8 = top_8[1]
-
-            let top_9 = items[8]
-            let name_9 = top_9[0]
-            let num_9 = top_9[1]
-
-            let top_10 = items[9]
-            let name_10 = top_10[0]
-            let num_10 = top_10[1]
-
-            let datas = [
-                {
-                    Country: name_1,
-                    Value: num_1
-                },
-                {
-                    Country: name_2,
-                    Value: num_2
-                },
-                {
-                    Country: name_3,
-                    Value: num_3
-                },
-                {
-                    Country: name_4,
-                    Value: num_4
-                },
-                {
-                    Country: name_5,
-                    Value: num_5
-                },
-                {
-                    Country: name_6,
-                    Value: num_6
-                },
-                {
-                    Country: name_7,
-                    Value: num_7
-                },
-                {
-                    Country: name_8,
-                    Value: num_8
-                },
-                {
-                    Country: name_9,
-                    Value: num_9
-                },
-                {
-                    Country: name_10,
-                    Value: num_10
+            // Select top 10 cities.
+            let datas = [];
+            for (let i = 0; i < 10; i++) {
+                let category = {
+                    key: items[i][0],
+                    value: items[i][1]
                 }
-            ]
-            console.log(datas)
+                datas.push(category);
+            }
+
             const margin = {top: 0, right: 0, bottom: 0, left: 0},
                 width = 500 - margin.left - margin.right,
                 height = 580 - margin.top - margin.bottom,
@@ -602,7 +453,7 @@
                     count2[element] = 1;
                 }
             }
-            data = []
+            data = [];
             for (const [key, value] of Object.entries(count2)) {
                 data.push({
                     date: key,
@@ -640,10 +491,10 @@
                 .attr("transform", `translate(${margin.left},${chartHeight + margin.top + 10})`)
                 .call(bottomGridlines);
 
-            const carbonExtent = d3.extent(data, d => d['value']);
-            const carbonScale = d3.scaleLinear().domain(carbonExtent).range([chartHeight, 0]);
-            let leftAxis = d3.axisLeft(carbonScale)
-            let leftGridlines = d3.axisLeft(carbonScale)
+            const reviewcountExtent = d3.extent(data, d => d['value']);
+            const reviewNumScale = d3.scaleLinear().domain(reviewcountExtent).range([chartHeight, 0]);
+            let leftAxis = d3.axisLeft(reviewNumScale)
+            let leftGridlines = d3.axisLeft(reviewNumScale)
                 .tickSize(-chartWidth - 10)
                 .tickFormat("")
             annotations.append("g")
@@ -676,7 +527,7 @@
                 .attr('opacity', 0.9)
                 .attr("fill", "skyblue")   // using attr here, style would work too
                 .attr("cx", d => dateScale(d['date']))
-                .attr("cy", d => carbonScale(d['value']));
+                .attr("cy", d => reviewNumScale(d['value']));
 
         });
 
