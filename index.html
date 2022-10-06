@@ -117,11 +117,11 @@
     // First compare the number of businesses by each category.
     d3.json('yelp_business_10percent.json').then(
         (data) => {
-            let string = ""
+            let categories_string = ""
             for (let i = 0; i < data.length; i++) {
-                string = data[i].categories + ", " + string
+                categories_string = data[i].categories + ", " + categories_string
             }
-            let categories_list = string.split(',');
+            let categories_list = categories_string.split(',');
             const count = {};
             for (const element of categories_list) {
                 if (count[element]) {
@@ -341,14 +341,11 @@
     // Find out which city has the most reviews.
     d3.json('./yelp_business_10percent.json').then(
         (data) => {
-            let string = ""
             let obj = []
             for (let i = 0; i < data.length; i++) {
-                string = data[i].city
-                number = data[i].review_count
                 obj.push({
-                    name: string,
-                    value: number
+                    name: data[i].city,
+                    value: data[i].review_count
                 });
             }
             let holder = {};
@@ -376,8 +373,8 @@
             let datas = [];
             for (let i = 0; i < 10; i++) {
                 let category = {
-                    key: items[i][0],
-                    value: items[i][1]
+                    Country: items[i][0],
+                    Value: items[i][1]
                 }
                 datas.push(category);
             }
