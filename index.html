@@ -29,13 +29,6 @@
             margin: 0 auto;
         }
 
-        #pie_chart {
-            width: 800px;
-            height: 500px;
-            background: black;
-            margin: 0 auto;
-        }
-
         #open_or_closed {
             width: 800px;
             height: 500px;
@@ -81,6 +74,11 @@
             stroke: none;
         }
 
+        .top_header {
+            background-image: url("back.jpeg");
+            height: 300px;
+        }
+
     </style>
 
     <body style="background-color: black; font-family: Courier New, Courier, monospace;">
@@ -88,10 +86,13 @@
         <head>
             <script src="https://d3js.org/d3.v7.min.js"></script>
         </head>
-        <div id="top_header" style="color:#fff; font-size: 20pt;"> 5100 Project 1 - Tianchen Wang; Yun Zhou; Zhi Lin
+        <div id="top_header" class="top_header" style="color:#fff; font-size: 20pt;">
+            <br>
+            <h1 style="color:#fff; text-align: center;"> 5100 Project 1</h1>
+            <h1 style="color:#fff; text-align: center;"> Exploration of the YELP Dataset</h1>
+            <h3 style="color:#fff; text-align: center;"> Tianchen Wang; Yun Zhou; Zhi Lin</h3>
         </div>
         <br>
-        <h1 style="color:#fff; text-align: center;"> Exploration of the YELP Dataset</h1>
         <br>
         <div id="top_category" style="margin-bottom: 100;">
             <h2 style="color:#fff; text-align: center;">P1. Top 10 Business Categories</h2>
@@ -104,17 +105,13 @@
         </div>
         <div id="review_city_count" style="color:#fff; font-size: 11pt;margin-top: 100;">
             <h2 style="color:#fff; text-align: center;">P3. Which City Has The Most Reviews?</h2>
-            <h3 style="color:#fff;text-align: center;">Count of Reviews per City</h3>
+            <h3 style="color:#fff;text-align: center;">Count of Reviews By City</h3>
         </div>
         <div id="time_series" style="margin-top: 200;">
             <h2 style="color:#fff; text-align: center;">P4. Is Now A Good Time To Start A New Business?</h2>
             <h3 style="color:#fff;text-align: center;">Post COVID-19 Pandemic</h3>
             <svg height="400" id="time_series" width="800">
             </svg>
-        </div>
-        <div id="pie_chart">
-            <h2 style="color:#fff;text-align: center;">P5. Distribution of Star Reviews</h2>
-            <h3 style="color:#fff;text-align: center;">Most People Leaves ... 5 Star!</h3>
         </div>
         <script>
 
@@ -188,7 +185,7 @@
 
                     let myColor = d3.scaleOrdinal()
                         .domain(datas)
-                        .range(d3.schemeAccent);
+                        .range(d3.schemeCategory10);
 
                     let rects = svg.selectAll("rect")
                         .data(datas)
@@ -222,7 +219,7 @@
                                     .attr('y1', y + padding)
                                     .attr('x2', width - 150)
                                     .attr('y2', y + padding)
-                                    .attr('stroke', 'grey')
+                                    .attr('stroke', 'white')
                                     .style('stroke-dasharray', ("3", "3"))
                             })
                                 .on('mouseleave', function () {
@@ -307,7 +304,8 @@
                         .range([0, chartHeight / 2.0]);
 
                     let bottomAxis = d3.axisBottom(xScale)
-                    axis_position = chartHeight - 200
+                        .tickSize(0)
+                    axis_position = chartHeight - 180
                     svg_barchart.append('g')
                         .attr('class', 'axis')
                         .attr('transform', 'translate(0,' + axis_position + ')')
@@ -315,8 +313,39 @@
                         .selectAll("text")
                         .style("text-anchor", "end")
                         .attr("dx", "-1em")
-                        .attr("dy", "-1em")
+                        .attr("dy", "-.5em")
                         .attr("transform", "rotate(-90)");
+
+                    // add legend 
+                    svg_barchart.append("rect")
+                        .attr("x", 400)
+                        .attr("y", 40)
+                        .attr('width', 15)
+                        .attr('height', 5)
+                        .style("fill", "skyblue")
+
+                    svg_barchart.append("rect")
+                        .attr("x", 400)
+                        .attr("y", 60)
+                        .attr('width', 15)
+                        .attr('height', 5)
+                        .style("fill", "orange")
+
+                    svg_barchart.append("text")
+                        .attr("x", 420)
+                        .attr("y", 45)
+                        .text("open")
+                        .style("font-size", "15px")
+                        .attr("alignment-baseline", "right")
+                        .style('fill', 'skyblue')
+
+                    svg_barchart.append("text")
+                        .attr("x", 420)
+                        .attr("y", 65)
+                        .text("closed")
+                        .style("font-size", "15px")
+                        .attr("alignment-baseline", "right")
+                        .style('fill', 'orange')
 
                     json.forEach((d, i) => {
                         svg_barchart.append('g')
@@ -326,8 +355,7 @@
                             .attr("y1", chartHeight / 2)
                             .attr("y2", chartHeight / 2 - openScale(d['is_open']))
                             .style("stroke", "skyblue")
-                            .style("stroke-width", 10)
-                            ;
+                            .style("stroke-width", 10);
                     });
 
                     json.forEach((d, i) => {
@@ -377,15 +405,17 @@
                     let datas = [];
                     for (let i = 0; i < 10; i++) {
                         let category = {
-                            Country: items[i][0],
+                            city: items[i][0],
                             Value: items[i][1]
                         }
                         datas.push(category);
                     }
-
+                    console.log(datas)
+                    let myColorScale = d3.scaleLinear().domain([1, 120000])
+                        .range(["white", "blue"])
                     const margin = { top: 0, right: 0, bottom: 0, left: 0 },
-                        width = 500 - margin.left - margin.right,
-                        height = 580 - margin.top - margin.bottom,
+                        width = 550 - margin.left - margin.right,
+                        height = 670 - margin.top - margin.bottom,
                         innerRadius = 90,
                         outerRadius = Math.min(width, height) / 2;
 
@@ -398,20 +428,20 @@
                     const x = d3.scaleBand()
                         .range([0, 2 * Math.PI])
                         .align(0)
-                        .domain(datas.map(d => d.Country));
+                        .domain(datas.map(d => d.city));
                     const y = d3.scaleRadial()
                         .range([innerRadius, outerRadius])
-                        .domain([0, 180000]);
+                        .domain([0, 130000]);
                     svg.append("g")
                         .selectAll("path")
                         .data(datas)
                         .join("path")
-                        .attr("fill", "pink")
+                        .attr("fill", d => myColorScale(d.Value))
                         .attr("d", d3.arc()
                             .innerRadius(innerRadius)
                             .outerRadius(d => y(d['Value']))
-                            .startAngle(d => x(d.Country))
-                            .endAngle(d => x(d.Country) + x.bandwidth())
+                            .startAngle(d => x(d.city))
+                            .endAngle(d => x(d.city) + x.bandwidth())
                             .padAngle(0.01)
                             .padRadius(innerRadius))
 
@@ -421,17 +451,17 @@
                         .data(datas)
                         .join("g")
                         .attr("text-anchor", function (d) {
-                            return (x(d.Country) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start";
+                            return (x(d.city) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "end" : "start";
                         })
                         .attr("transform", function (d) {
-                            return "rotate(" + ((x(d.Country) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (y(d['Value']) + 10) + ",0)";
+                            return "rotate(" + ((x(d.city) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")" + "translate(" + (y(d['Value']) + 10) + ",0)";
                         })
                         .append("text")
                         .text(function (d) {
-                            return (d.Country)
+                            return (d.city)
                         })
                         .attr("transform", function (d) {
-                            return (x(d.Country) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)";
+                            return (x(d.city) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)";
                         })
                         .attr("alignment-baseline", "middle")
                         .style("fill", "white")
@@ -498,6 +528,7 @@
                     let leftGridlines = d3.axisLeft(reviewNumScale)
                         .tickSize(-chartWidth - 10)
                         .tickFormat("")
+
                     annotations.append("g")
                         .attr("class", "y axis")
                         .attr("transform", `translate(${margin.left},${margin.top})`)
@@ -506,7 +537,6 @@
                         .attr("class", "y gridlines")
                         .attr("transform", `translate(${margin.left},${margin.top})`)
                         .call(leftGridlines);
-
                     svg_time_series.append("text")
                         .attr("class", "x label")
                         .attr("text-anchor", "end")
@@ -529,82 +559,7 @@
                         .attr("fill", "skyblue")   // using attr here, style would work too
                         .attr("cx", d => dateScale(d['date']))
                         .attr("cy", d => reviewNumScale(d['value']));
-
                 });
-
-            // Finally, analyzing the distribution of star reviews in the dataset
-            d3.json('./yelp_review_star_2percent.json').then(
-                (data2) => {
-                    function getCount(star_num) {
-                        let count = 0;
-                        for (let i = 0; i < data2.length; i++) {
-                            if (data2[i].stars == star_num) {
-                                count++;
-                            }
-                        }
-                        return count;
-                    }
-
-                    let star_1_pie = getCount(1)
-                    let star_2_pie = getCount(2)
-                    let star_3_pie = getCount(3)
-                    let star_4_pie = getCount(4)
-                    let star_5_pie = getCount(5)
-
-                    let data_pie =
-                        { 1: star_1_pie, 2: star_2_pie, 3: star_3_pie, 4: star_4_pie, 5: star_5_pie }
-
-                    const width = 450,
-                        height = 450,
-                        margin = 40;
-
-                    const radius = Math.min(width, height) / 2 - margin
-
-                    const svg = d3.select("#pie_chart")
-                        .append("svg")
-                        .attr("width", width)
-                        .attr("height", height)
-                        .append("g")
-                        .attr("transform", `translate(${width / 2}, ${height / 2})`);
-
-                    const color = d3.scaleOrdinal()
-                        .range(d3.schemeSet2);
-
-                    const pie = d3.pie()
-                        .value(function (d) {
-                            return d[1]
-                        })
-                    const data_ready = pie(Object.entries(data_pie))
-
-                    const arcGenerator = d3.arc()
-                        .innerRadius(0)
-                        .outerRadius(radius)
-
-                    svg
-                        .selectAll('mySlices')
-                        .data(data_ready)
-                        .join('path')
-                        .attr('d', arcGenerator)
-                        .attr('fill', function (d) {
-                            return (color(d.data[0]))
-                        })
-                        .attr("stroke", "white")
-                        .style("stroke-width", "2px")
-                        .style("opacity", 0.9)
-
-                    svg
-                        .selectAll('mySlices')
-                        .data(data_ready)
-                        .join('text')
-                        .text(function (d) {
-                            return "Star" + d.data[0]
-                        })
-                        .attr("transform", function (d) {
-                            return `translate(${arcGenerator.centroid(d)})`
-                        })
-                        .style("text-anchor", "middle")
-                        .style("font-size", 15)
-                })
 
         </script>
     </body>
